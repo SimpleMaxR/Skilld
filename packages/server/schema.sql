@@ -1,4 +1,4 @@
--- SkillVault SQLite / Cloudflare D1 Schema
+-- Skilld SQLite / Cloudflare D1 Schema
 
 CREATE TABLE IF NOT EXISTS skills (
   id TEXT PRIMARY KEY,

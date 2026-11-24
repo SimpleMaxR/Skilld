@@ -44,17 +44,17 @@ function parseArgs(argv) {
 }
 
 function printHelp() {
-  console.log(`SkillVault Device Agent CLI
+  console.log(`Skilld Device Agent CLI
 
 Usage:
-  skillvault init --server <url> --token <token> [--name <device-name>] [--interval <sec>]
-  skillvault status                      Show configured device & detected agents
-  skillvault scan [--json]               Scan local agent skills without syncing
-  skillvault sync                        Run one sync cycle (report + apply actions)
-  skillvault daemon                      Run continuous background sync + file watcher
-  skillvault backups                     List local pre-overwrite backup snapshots
-  skillvault restore <backup-id>         Restore a local backup snapshot
-  skillvault service [launchd|systemd]   Print macOS launchd or Linux systemd service file
+  skilld init --server <url> --token <token> [--name <device-name>] [--interval <sec>]
+  skilld status                      Show configured device & detected agents
+  skilld scan [--json]               Scan local agent skills without syncing
+  skilld sync                        Run one sync cycle (report + apply actions)
+  skilld daemon                      Run continuous background sync + file watcher
+  skilld backups                     List local pre-overwrite backup snapshots
+  skilld restore <backup-id>         Restore a local backup snapshot
+  skilld service [launchd|systemd]   Print macOS launchd or Linux systemd service file
 `);
 }
 
@@ -97,7 +97,7 @@ async function main() {
       vaultHome
     );
 
-    console.log(`Initialized SkillVault device "${saved.deviceName}" (${saved.deviceId})`);
+    console.log(`Initialized Skilld device "${saved.deviceName}" (${saved.deviceId})`);
     console.log(`Config saved to: ${path.join(vaultHome, 'config.json')}`);
     const res = await runSyncCycle({ config: saved, vaultHome });
     console.log(`Initial sync complete: ${res.scannedCount} skill(s) reported.`);
@@ -181,7 +181,7 @@ async function main() {
   if (command === 'restore') {
     const backupId = args[0];
     if (!backupId) {
-      console.error('Error: backup ID is required. Run "skillvault backups" to list available backups.');
+      console.error('Error: backup ID is required. Run "skilld backups" to list available backups.');
       process.exitCode = 1;
       return;
     }
@@ -194,11 +194,11 @@ async function main() {
 
   if (command === 'daemon') {
     console.log(
-      `Starting SkillVault daemon for "${config.deviceName}" (${config.deviceId}) -> ${config.serverUrl} (every ${config.pollIntervalSec}s)`
+      `Starting Skilld daemon for "${config.deviceName}" (${config.deviceId}) -> ${config.serverUrl} (every ${config.pollIntervalSec}s)`
     );
     const handle = startDaemon({ config, vaultHome });
     const shutdown = () => {
-      console.log('\nStopping SkillVault daemon...');
+      console.log('\nStopping Skilld daemon...');
       handle.stop();
       process.exit(0);
     };

@@ -1,7 +1,7 @@
 import { createSqlStore, normalizeParams } from './shared-store.mjs';
 
 /**
- * Create a SkillVault store backed by Cloudflare Workers D1Database.
+ * Create a Skilld store backed by Cloudflare Workers D1Database.
  */
 export function createD1Store(d1Database) {
   const adapter = {

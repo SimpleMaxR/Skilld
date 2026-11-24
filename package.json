@@ -1,17 +1,17 @@
 {
-  "name": "skillvault",
+  "name": "skilld",
   "version": "0.2.0",
   "description": "Cloud-synced AI Agent Skills manager with native Go + statically linked SQLite high-concurrency backend and multi-device Agent CLI",
   "type": "module",
   "private": true,
   "bin": {
-    "skillvault": "./packages/agent/bin/skillvault.mjs"
+    "skilld": "./packages/agent/bin/skilld.mjs"
   },
   "scripts": {
     "build:server": "make build",
     "build:web": "node scripts/embed-web.mjs",
-    "start": "./bin/skillvault-server",
-    "agent": "node packages/agent/bin/skillvault.mjs",
+    "start": "./bin/skilld-server",
+    "agent": "node packages/agent/bin/skilld.mjs",
     "test": "node scripts/embed-web.mjs && node --test tests/shared.test.mjs tests/upstream.test.mjs tests/cf-worker.test.mjs tests/e2e.test.mjs",
     "demo": "node scripts/seed-demo.mjs"
   },

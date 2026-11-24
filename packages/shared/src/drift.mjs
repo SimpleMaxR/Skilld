@@ -4,7 +4,7 @@ import { INSTALL_STATUS } from './protocol.mjs';
  * Pure 3-way hash drift state machine for a single (device, agent, skill) installation.
  *
  * @param {object} params
- * @param {string|null|undefined} params.baseHash - Hash last synced/adopted by SkillVault (from state.json)
+ * @param {string|null|undefined} params.baseHash - Hash last synced/adopted by Skilld (from state.json)
  * @param {string|null|undefined} params.actualHash - Hash currently scanned on disk (null if folder missing)
  * @param {string|null|undefined} params.desiredHash - Hash of target Vault version
  * @param {boolean} params.isManaged - Whether this installation is linked to a Vault skill or local ledger

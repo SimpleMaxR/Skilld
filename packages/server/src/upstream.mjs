@@ -98,7 +98,7 @@ function cleanSubpath(p) {
 function githubHeaders(token) {
   const headers = {
     accept: 'application/vnd.github+json',
-    'user-agent': 'SkillVault/0.1',
+    'user-agent': 'Skilld/0.1',
     'x-github-api-version': '2022-11-28',
   };
   if (token) {

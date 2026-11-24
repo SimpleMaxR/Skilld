@@ -7,7 +7,7 @@ export default {
     const store = createD1Store(env.DB);
     const app = createApp({
       store,
-      token: env.SKILLVAULT_TOKEN,
+      token: env.SKILLD_TOKEN,
       githubToken: env.GITHUB_TOKEN || null,
       webAssets: WEB_ASSETS,
       runtime: 'cloudflare-workers',

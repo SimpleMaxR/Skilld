@@ -6,8 +6,8 @@ import { DEFAULT_ADAPTERS, isoNow } from '../../shared/src/index.mjs';
 
 export function resolveVaultHome(explicitHome = null) {
   if (explicitHome) return path.resolve(explicitHome);
-  if (process.env.SKILLVAULT_HOME) return path.resolve(process.env.SKILLVAULT_HOME);
-  return path.join(os.homedir(), '.skillvault');
+  if (process.env.SKILLD_HOME) return path.resolve(process.env.SKILLD_HOME);
+  return path.join(os.homedir(), '.skilld');
 }
 
 export function expandHomePath(inputPath, homeDir = os.homedir()) {

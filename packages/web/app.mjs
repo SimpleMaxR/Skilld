@@ -1,4 +1,4 @@
-const TOKEN_STORAGE_KEY = 'skillvault.token';
+const TOKEN_STORAGE_KEY = 'skilld.token';
 
 const STATUS_LABELS = {
   synced: 'Synced',
@@ -273,21 +273,21 @@ function renderUnlockScreen() {
       <div class="modal-card" style="max-width:420px">
         <div class="modal-header">
           <div class="brand">
-            <div class="brand-mark">SV</div>
+            <div class="brand-mark">SD</div>
             <div>
-              <div class="brand-title">SkillVault</div>
+              <div class="brand-title">Skilld</div>
               <div class="brand-sub">Multi-Device Agent Skills Control Plane</div>
             </div>
           </div>
         </div>
         <form id="unlock-form" class="modal-body">
           <p style="margin:0;color:var(--text-muted)">
-            Enter your <code class="mono">SKILLVAULT_TOKEN</code> to unlock your personal skills vault.
+            Enter your <code class="mono">SKILLD_TOKEN</code> to unlock your personal skills vault.
           </p>
           ${state.authError ? `<div class="banner error" style="margin-top:0">${escapeHtml(state.authError)}</div>` : ''}
           <div>
             <label class="field-label" for="token-input">Vault Access Token</label>
-            <input id="token-input" class="field-input mono" type="password" placeholder="sv_..." value="${escapeHtml(state.token)}" autofocus required />
+            <input id="token-input" class="field-input mono" type="password" placeholder="sd_..." value="${escapeHtml(state.token)}" autofocus required />
           </div>
           <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:6px">
             <button type="submit" class="btn btn-primary">Unlock Vault</button>
@@ -306,9 +306,9 @@ function renderRail() {
     <aside class="rail">
       <div class="rail-header">
         <div class="brand">
-          <div class="brand-mark">SV</div>
+          <div class="brand-mark">SD</div>
           <div>
-            <div class="brand-title">SkillVault</div>
+            <div class="brand-title">Skilld</div>
             <div class="brand-sub">${summary.onlineDevices ?? 0}/${summary.totalDevices ?? 0} online</div>
           </div>
         </div>
@@ -976,7 +976,7 @@ function renderInstallationBanner(inst, vaultSkill) {
     return `
       <div class="banner warn">
         <div>
-          <strong>Local drift detected.</strong> Someone or an AI modified files on this device outside SkillVault.
+          <strong>Local drift detected.</strong> Someone or an AI modified files on this device outside Skilld.
           Auto-sync will never overwrite your local changes without confirmation.
         </div>
       </div>
@@ -996,7 +996,7 @@ function renderInstallationBanner(inst, vaultSkill) {
     return `
       <div class="banner info">
         <div>
-          <strong>Unmanaged local skill.</strong> Found on disk without a SkillVault ledger entry. Adopt it into your Vault to sync across devices.
+          <strong>Unmanaged local skill.</strong> Found on disk without a Skilld ledger entry. Adopt it into your Vault to sync across devices.
         </div>
       </div>
     `;
@@ -1005,7 +1005,7 @@ function renderInstallationBanner(inst, vaultSkill) {
     return `
       <div class="banner error">
         <div>
-          <strong>Directory missing on disk.</strong> Recorded in local ledger, but the skill folder was deleted outside SkillVault.
+          <strong>Directory missing on disk.</strong> Recorded in local ledger, but the skill folder was deleted outside Skilld.
         </div>
       </div>
     `;
@@ -1317,9 +1317,9 @@ function renderCreateAccountModal() {
 
 function renderConnectModal() {
   const origin = window.location.origin;
-  const initCmd = `npx skillvault init --server ${origin} --token ${state.token} --name "$(hostname -s)"`;
-  const daemonCmd = `npx skillvault daemon`;
-  const repoCmd = `node packages/agent/bin/skillvault.mjs init --server ${origin} --token ${state.token}\nnode packages/agent/bin/skillvault.mjs daemon`;
+  const initCmd = `npx skilld init --server ${origin} --token ${state.token} --name "$(hostname -s)"`;
+  const daemonCmd = `npx skilld daemon`;
+  const repoCmd = `node packages/agent/bin/skilld.mjs init --server ${origin} --token ${state.token}\nnode packages/agent/bin/skilld.mjs daemon`;
 
   return `
     <div class="modal-backdrop">
@@ -1337,7 +1337,7 @@ function renderConnectModal() {
             <div class="code-block">${escapeHtml(initCmd)}</div>
           </div>
           <div>
-            <label class="field-label">2. Start Background Sync Daemon (or generate launchd/systemd unit with <code>skillvault service</code>)</label>
+            <label class="field-label">2. Start Background Sync Daemon (or generate launchd/systemd unit with <code>skilld service</code>)</label>
             <div class="code-block">${escapeHtml(daemonCmd)}</div>
           </div>
           <div>

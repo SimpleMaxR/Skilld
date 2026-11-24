@@ -56,11 +56,11 @@ export async function runSyncCycle({
       await applyAction({ action, config, vaultHome, homeDir });
       await client.completeAction(action.id, { status: ACTION_STATUS.COMPLETED });
       actionsApplied += 1;
-      logger.log?.(`[skillvault] Applied ${action.type} for ${action.agentId}/${action.skillName}`);
+      logger.log?.(`[skilld] Applied ${action.type} for ${action.agentId}/${action.skillName}`);
     } catch (err) {
       actionsFailed += 1;
       logger.error?.(
-        `[skillvault] Failed ${action.type} for ${action.agentId}/${action.skillName}: ${err.message}`
+        `[skilld] Failed ${action.type} for ${action.agentId}/${action.skillName}: ${err.message}`
       );
       await client
         .completeAction(action.id, {
@@ -106,11 +106,11 @@ export function startDaemon({
       const res = await runSyncCycle({ config, vaultHome, homeDir, logger });
       if (res.actionsClaimed > 0 || reason === 'startup') {
         logger.log?.(
-          `[skillvault] Sync (${reason}): scanned=${res.scannedCount}, applied=${res.actionsApplied}, failed=${res.actionsFailed}`
+          `[skilld] Sync (${reason}): scanned=${res.scannedCount}, applied=${res.actionsApplied}, failed=${res.actionsFailed}`
         );
       }
     } catch (err) {
-      logger.error?.(`[skillvault] Sync error (${reason}): ${err.message}`);
+      logger.error?.(`[skilld] Sync error (${reason}): ${err.message}`);
     } finally {
       running = false;
     }
@@ -163,13 +163,13 @@ export function generateServiceConfig({
     const logDir = path.join(vaultHome, 'logs');
     return {
       kind: 'launchd',
-      targetPath: '~/Library/LaunchAgents/dev.skillvault.agent.plist',
+      targetPath: '~/Library/LaunchAgents/dev.skilld.agent.plist',
       content: `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
   <key>Label</key>
-  <string>dev.skillvault.agent</string>
+  <string>dev.skilld.agent</string>
   <key>ProgramArguments</key>
   <array>
     <string>${nodePath}</string>
@@ -178,7 +178,7 @@ export function generateServiceConfig({
   </array>
   <key>EnvironmentVariables</key>
   <dict>
-    <key>SKILLVAULT_HOME</key>
+    <key>SKILLD_HOME</key>
     <string>${vaultHome}</string>
   </dict>
   <key>RunAtLoad</key>
@@ -193,20 +193,20 @@ export function generateServiceConfig({
 </plist>
 `,
       installHint:
-        `mkdir -p "${logDir}" ~/Library/LaunchAgents && launchctl load -w ~/Library/LaunchAgents/dev.skillvault.agent.plist`,
+        `mkdir -p "${logDir}" ~/Library/LaunchAgents && launchctl load -w ~/Library/LaunchAgents/dev.skilld.agent.plist`,
     };
   }
 
   return {
     kind: 'systemd',
-    targetPath: '~/.config/systemd/user/skillvault-agent.service',
+    targetPath: '~/.config/systemd/user/skilld-agent.service',
     content: `[Unit]
-Description=SkillVault Agent Sync Daemon
+Description=Skilld Agent Sync Daemon
 After=network-online.target
 
 [Service]
 Type=simple
-Environment=SKILLVAULT_HOME=${vaultHome}
+Environment=SKILLD_HOME=${vaultHome}
 ExecStart=${nodePath} ${resolvedBin} daemon
 Restart=always
 RestartSec=5
@@ -215,6 +215,6 @@ RestartSec=5
 WantedBy=default.target
 `,
     installHint:
-      'mkdir -p ~/.config/systemd/user && systemctl --user daemon-reload && systemctl --user enable --now skillvault-agent',
+      'mkdir -p ~/.config/systemd/user && systemctl --user daemon-reload && systemctl --user enable --now skilld-agent',
   };
 }

@@ -1,19 +1,19 @@
-name = "skillvault"
+name = "skilld"
 main = "src/entry-worker.mjs"
 compatibility_date = "2026-01-15"
 
 # Build embedded web assets before deploying:
 #   npm run build:web
 # Apply D1 schema before first deploy:
-#   npx wrangler d1 execute skillvault-db --remote --file=./schema.sql
+#   npx wrangler d1 execute skilld-db --remote --file=./schema.sql
 # Set secret token:
-#   npx wrangler secret put SKILLVAULT_TOKEN
+#   npx wrangler secret put SKILLD_TOKEN
 # Optional GitHub token for higher rate limits / private repos:
 #   npx wrangler secret put GITHUB_TOKEN
 
 [[d1_databases]]
 binding = "DB"
-database_name = "skillvault-db"
+database_name = "skilld-db"
 database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
 
 # Optional cron trigger to check GitHub upstream updates every hour:

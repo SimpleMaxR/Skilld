@@ -779,7 +779,7 @@ export function createApp({
       if (err instanceof HttpError) {
         return jsonResponse({ error: err.message, code: err.code }, err.status);
       }
-      console.error('[SkillVault] Unhandled server error:', err);
+      console.error('[Skilld] Unhandled server error:', err);
       return jsonResponse({ error: err?.message || 'Internal Server Error', code: 'INTERNAL_ERROR' }, 500);
     }
   }
