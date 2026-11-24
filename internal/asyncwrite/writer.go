@@ -8,7 +8,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"skillvault/internal/db"
+	"skilld/internal/db"
 )
 
 const (

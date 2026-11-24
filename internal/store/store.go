@@ -8,9 +8,9 @@ import (
 	"fmt"
 	"strings"
 
-	"skillvault/internal/db"
-	"skillvault/internal/hotstate"
-	"skillvault/internal/skill"
+	"skilld/internal/db"
+	"skilld/internal/hotstate"
+	"skilld/internal/skill"
 )
 
 var (
@@ -18,7 +18,7 @@ var (
 	ErrConflict = errors.New("record conflict")
 )
 
-// Store implements SkillVault persistence strictly using SplitDB (ReadDB for reads, WithWriteTx on WriteDB for writes).
+// Store implements Skilld persistence strictly using SplitDB (ReadDB for reads, WithWriteTx on WriteDB for writes).
 type Store struct {
 	db *db.SplitDB
 }
@@ -40,7 +40,7 @@ type SkillVersion struct {
 	CreatedAt   string                     `json:"createdAt"`
 }
 
-// Skill represents a SkillVault catalog item.
+// Skill represents a Skilld catalog item.
 type Skill struct {
 	ID                    string         `json:"id"`
 	Name                  string         `json:"name"`

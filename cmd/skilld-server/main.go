@@ -19,18 +19,18 @@ import (
 	"syscall"
 	"time"
 
-	"skillvault"
-	"skillvault/internal/asyncwrite"
-	"skillvault/internal/db"
-	"skillvault/internal/hotstate"
-	"skillvault/internal/server"
-	"skillvault/internal/skill"
-	"skillvault/internal/store"
+	"skilld"
+	"skilld/internal/asyncwrite"
+	"skilld/internal/db"
+	"skilld/internal/hotstate"
+	"skilld/internal/server"
+	"skilld/internal/skill"
+	"skilld/internal/store"
 )
 
 func main() {
 	if err := run(); err != nil {
-		log.Fatalf("[SkillVault] Fatal error: %v", err)
+		log.Fatalf("[Skilld] Fatal error: %v", err)
 	}
 }
 
@@ -44,7 +44,7 @@ func run() error {
 	hostFlag := flag.String("host", defaultHost, "TCP host to bind")
 	portFlag := flag.Int("port", defaultPort, "TCP port to listen on (0 for ephemeral)")
 	dataDirFlag := flag.String("data-dir", defaultDataDir, "Directory for SQLite database and generated token")
-	tokenFlag := flag.String("token", os.Getenv("SKILLVAULT_TOKEN"), "Root Bearer access token")
+	tokenFlag := flag.String("token", os.Getenv("SKILLD_TOKEN"), "Root Bearer access token")
 	readConnsFlag := flag.Int("read-conns", defaultReadConns, "ReadDB connection pool size (clamped 4..6)")
 	githubTokenFlag := flag.String("github-token", os.Getenv("GITHUB_TOKEN"), "Optional GitHub API token")
 	upstreamMinFlag := flag.Int("upstream-interval-min", defaultUpstreamMin, "Background upstream check interval in minutes (0 disables)")
@@ -66,18 +66,18 @@ func run() error {
 	ctx, stopSignals := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stopSignals()
 
-	dbPath := filepath.Join(absDataDir, "skillvault.db")
+	dbPath := filepath.Join(absDataDir, "skilld.db")
 	splitDB, err := db.Open(ctx, db.Options{
 		Path:        dbPath,
 		ReadConns:   *readConnsFlag,
-		MigrationFS: skillvault.MigrationFiles,
+		MigrationFS: skilld.MigrationFiles,
 	})
 	if err != nil {
 		return fmt.Errorf("open split sqlite db: %w", err)
 	}
 	defer func() {
 		if closeErr := splitDB.Close(); closeErr != nil {
-			log.Printf("[SkillVault] Close SplitDB error: %v", closeErr)
+			log.Printf("[Skilld] Close SplitDB error: %v", closeErr)
 		}
 	}()
 
@@ -119,7 +119,7 @@ func run() error {
 		Engine:      engine,
 		Writer:      writer,
 		GitHub:      ghClient,
-		WebAssets:   skillvault.WebAssets,
+		WebAssets:   skilld.WebAssets,
 		GitHubToken: *githubTokenFlag,
 	})
 
@@ -157,7 +157,7 @@ func run() error {
 		errCh <- nil
 	}()
 
-	fmt.Printf("SkillVault Server running on http://%s:%d\n", displayHost, actualPort)
+	fmt.Printf("Skilld Server running on http://%s:%d\n", displayHost, actualPort)
 	fmt.Printf("Data directory: %s\n", absDataDir)
 	fmt.Printf("Database PRAGMAs: journal=%s sync=%d mmap=%d cache=%d wal_autocheckpoint=%d read_query_only=%d read_conns=%d write_conns=%d\n",
 		pragmas.WriteJournalMode,
@@ -178,7 +178,7 @@ func run() error {
 
 	select {
 	case <-ctx.Done():
-		log.Println("[SkillVault] Shutdown signal received; draining HTTP connections and async queue...")
+		log.Println("[Skilld] Shutdown signal received; draining HTTP connections and async queue...")
 	case serveErr := <-errCh:
 		if serveErr != nil {
 			return serveErr
@@ -191,13 +191,13 @@ func run() error {
 	defer cancel()
 
 	if err := httpServer.Shutdown(shutdownCtx); err != nil {
-		log.Printf("[SkillVault] HTTP shutdown error: %v", err)
+		log.Printf("[Skilld] HTTP shutdown error: %v", err)
 	}
 	if err := writer.Shutdown(shutdownCtx); err != nil {
-		log.Printf("[SkillVault] Async writer drain error: %v", err)
+		log.Printf("[Skilld] Async writer drain error: %v", err)
 	} else {
 		stStats := writer.Stats()
-		log.Printf("[SkillVault] Async queue drained cleanly (flushed_events=%d flushed_batches=%d)",
+		log.Printf("[Skilld] Async queue drained cleanly (flushed_events=%d flushed_batches=%d)",
 			stStats.FlushedEvents, stStats.FlushedBatches)
 	}
 
@@ -253,7 +253,7 @@ func resolveOrCreateToken(explicit, dataDir string) (string, error) {
 	if _, err := rand.Read(b[:]); err != nil {
 		return "", err
 	}
-	generated := "sv_" + hex.EncodeToString(b[:])
+	generated := "sd_" + hex.EncodeToString(b[:])
 	if err := os.WriteFile(tokenPath, []byte(generated+"\n"), 0o600); err != nil {
 		return "", err
 	}

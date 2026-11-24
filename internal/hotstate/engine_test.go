@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"skillvault/internal/hotstate"
+	"skilld/internal/hotstate"
 )
 
 func hashToken(tok string) string {
@@ -19,12 +19,12 @@ func hashToken(tok string) string {
 
 func TestEngineConcurrentPreDeductionNoOverspend(t *testing.T) {
 	engine := hotstate.NewEngine()
-	tok := "svk_concurrent_quota_test"
+	tok := "sdk_concurrent_quota_test"
 	err := engine.UpsertAccount(hotstate.AccountRecord{
 		ID:             "acct-1",
 		Name:           "Worker Account",
 		TokenHashHex:   hashToken(tok),
-		TokenPrefix:    "svk_conc",
+		TokenPrefix:    "sdk_conc",
 		Role:           "device",
 		Enabled:        true,
 		UnlimitedQuota: false,
@@ -91,12 +91,12 @@ func TestEngineConcurrentPreDeductionNoOverspend(t *testing.T) {
 
 func TestEngineRollbackRestoresQuotaAndDynamicRouteSwitch(t *testing.T) {
 	engine := hotstate.NewEngine()
-	tok := "svk_rollback_test"
+	tok := "sdk_rollback_test"
 	if err := engine.UpsertAccount(hotstate.AccountRecord{
 		ID:             "acct-rb",
 		Name:           "Rollback Tester",
 		TokenHashHex:   hashToken(tok),
-		TokenPrefix:    "svk_roll",
+		TokenPrefix:    "sdk_roll",
 		Role:           "device",
 		Enabled:        true,
 		BalanceMicros:  50,
@@ -135,12 +135,12 @@ func TestEngineRollbackRestoresQuotaAndDynamicRouteSwitch(t *testing.T) {
 
 func TestEngineRateLimiterAndDeviceHeartbeatCache(t *testing.T) {
 	engine := hotstate.NewEngine()
-	tok := "svk_ratelimit_test"
+	tok := "sdk_ratelimit_test"
 	if err := engine.UpsertAccount(hotstate.AccountRecord{
 		ID:             "acct-rl",
 		Name:           "Rate Limited",
 		TokenHashHex:   hashToken(tok),
-		TokenPrefix:    "svk_rl",
+		TokenPrefix:    "sdk_rl",
 		Role:           "device",
 		Enabled:        true,
 		UnlimitedQuota: true,
@@ -181,12 +181,12 @@ func BenchmarkHotPathAdmitCommitParallel(b *testing.B) {
 	engine := hotstate.NewEngine()
 	tokens := make([]string, 16)
 	for i := range tokens {
-		tokens[i] = fmt.Sprintf("svk_bench_%02d", i)
+		tokens[i] = fmt.Sprintf("sdk_bench_%02d", i)
 		if err := engine.UpsertAccount(hotstate.AccountRecord{
 			ID:             fmt.Sprintf("acct-b-%d", i),
 			Name:           "Bench",
 			TokenHashHex:   hashToken(tokens[i]),
-			TokenPrefix:    "svk_bench",
+			TokenPrefix:    "sdk_bench",
 			Role:           "device",
 			Enabled:        true,
 			UnlimitedQuota: false,

@@ -1,4 +1,4 @@
-package skillvault
+package skilld
 
 import "embed"
 

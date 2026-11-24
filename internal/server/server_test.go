@@ -16,13 +16,13 @@ import (
 	"testing"
 	"time"
 
-	"skillvault"
-	"skillvault/internal/asyncwrite"
-	"skillvault/internal/db"
-	"skillvault/internal/hotstate"
-	"skillvault/internal/server"
-	"skillvault/internal/skill"
-	"skillvault/internal/store"
+	"skilld"
+	"skilld/internal/asyncwrite"
+	"skilld/internal/db"
+	"skilld/internal/hotstate"
+	"skilld/internal/server"
+	"skilld/internal/skill"
+	"skilld/internal/store"
 )
 
 type testHarness struct {
@@ -45,14 +45,14 @@ func newTestHarness(t *testing.T, gh *skill.GitHubClient) *testHarness {
 	sdb, err := db.Open(ctx, db.Options{
 		Path:        dbPath,
 		ReadConns:   6,
-		MigrationFS: skillvault.MigrationFiles,
+		MigrationFS: skilld.MigrationFiles,
 	})
 	if err != nil {
 		t.Fatalf("db.Open failed: %v", err)
 	}
 	st := store.New(sdb)
 	engine := hotstate.NewEngine()
-	tok := "sv_test_root_secret"
+	tok := "sd_test_root_secret"
 	sum := sha256.Sum256([]byte(tok))
 	if err := st.EnsureRootAccount(ctx, hex.EncodeToString(sum[:]), tok[:8]); err != nil {
 		t.Fatal(err)
@@ -77,7 +77,7 @@ func newTestHarness(t *testing.T, gh *skill.GitHubClient) *testHarness {
 		Engine:    engine,
 		Writer:    writer,
 		GitHub:    gh,
-		WebAssets: skillvault.WebAssets,
+		WebAssets: skilld.WebAssets,
 	})
 
 	h := &testHarness{
@@ -107,7 +107,7 @@ func (h *testHarness) req(t *testing.T, method, path string, body any, token str
 		}
 		reader = bytes.NewReader(b)
 	}
-	r := httptest.NewRequest(method, "http://skillvault.local"+path, reader)
+	r := httptest.NewRequest(method, "http://skilld.local"+path, reader)
 	r.Header.Set("Content-Type", "application/json")
 	if token != "" {
 		r.Header.Set("Authorization", "Bearer "+token)
@@ -120,7 +120,7 @@ func (h *testHarness) req(t *testing.T, method, path string, body any, token str
 	return rec.Code, parsed, raw
 }
 
-func TestFullSkillVaultAPIContractAndEmbeddedAssets(t *testing.T) {
+func TestFullSkilldAPIContractAndEmbeddedAssets(t *testing.T) {
 	h := newTestHarness(t, nil)
 
 	// 1. Health & embedded web assets without auth; API protected by auth.
@@ -133,7 +133,7 @@ func TestFullSkillVaultAPIContractAndEmbeddedAssets(t *testing.T) {
 		t.Fatalf("expected 401 on unauthenticated /api/overview, got %d", code)
 	}
 	code, _, htmlBody := h.req(t, "GET", "/", nil, "")
-	if code != 200 || !strings.Contains(htmlBody, "SkillVault") {
+	if code != 200 || !strings.Contains(htmlBody, "Skilld") {
 		t.Fatalf("expected embedded index.html, got code=%d", code)
 	}
 	code, _, cssBody := h.req(t, "GET", "/styles.css", nil, "")

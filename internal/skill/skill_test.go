@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"skillvault/internal/skill"
+	"skilld/internal/skill"
 )
 
 func TestSlugifyAndRelativePaths(t *testing.T) {

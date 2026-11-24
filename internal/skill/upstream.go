@@ -224,7 +224,7 @@ func (c *GitHubClient) fetchJSON(ctx context.Context, rawURL, tokenOverride stri
 		return &UpstreamError{Status: 500, Code: "GITHUB_REQUEST_ERROR", Message: err.Error()}
 	}
 	req.Header.Set("Accept", "application/vnd.github+json")
-	req.Header.Set("User-Agent", "SkillVault/0.2")
+	req.Header.Set("User-Agent", "Skilld/0.2")
 	req.Header.Set("X-GitHub-Api-Version", "2022-11-28")
 	tok := strings.TrimSpace(tokenOverride)
 	if tok == "" {

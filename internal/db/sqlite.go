@@ -21,9 +21,9 @@ import (
 
 const (
 	// DriverWrite is the custom sql driver name configured for serialized immediate writes.
-	DriverWrite = "sqlite3_skillvault_write"
+	DriverWrite = "sqlite3_skilld_write"
 	// DriverRead is the custom sql driver name configured for read-only WAL queries.
-	DriverRead = "sqlite3_skillvault_read"
+	DriverRead = "sqlite3_skilld_read"
 
 	DefaultReadConns  = 6
 	MinReadConns      = 4

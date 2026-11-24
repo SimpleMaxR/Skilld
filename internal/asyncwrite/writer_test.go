@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	"skillvault"
-	"skillvault/internal/asyncwrite"
-	"skillvault/internal/db"
+	"skilld"
+	"skilld/internal/asyncwrite"
+	"skilld/internal/db"
 )
 
 func TestGroupCommitBatch64Timer15msAndGracefulDrain(t *testing.T) {
@@ -19,7 +19,7 @@ func TestGroupCommitBatch64Timer15msAndGracefulDrain(t *testing.T) {
 	sdb, err := db.Open(ctx, db.Options{
 		Path:        dbPath,
 		ReadConns:   4,
-		MigrationFS: skillvault.MigrationFiles,
+		MigrationFS: skilld.MigrationFiles,
 	})
 	if err != nil {
 		t.Fatalf("db.Open failed: %v", err)
@@ -31,7 +31,7 @@ func TestGroupCommitBatch64Timer15msAndGracefulDrain(t *testing.T) {
 		INSERT INTO api_accounts (
 			id, name, token_hash, token_prefix, role, enabled, unlimited_quota,
 			balance_micros, total_consumed, rate_limit_rps, rate_limit_burst, created_at, updated_at
-		) VALUES ('acct-gc', 'GC Tester', 'hash1', 'svk_1', 'device', 1, 0, 50000, 0, 1000, 1000, '2026-11-24T00:00:00Z', '2026-11-24T00:00:00Z')
+		) VALUES ('acct-gc', 'GC Tester', 'hash1', 'sdk_1', 'device', 1, 0, 50000, 0, 1000, 1000, '2026-11-24T00:00:00Z', '2026-11-24T00:00:00Z')
 	`)
 	if err != nil {
 		t.Fatalf("seed account failed: %v", err)
@@ -173,7 +173,7 @@ func BenchmarkGroupCommitThroughput(b *testing.B) {
 	sdb, err := db.Open(ctx, db.Options{
 		Path:        dbPath,
 		ReadConns:   6,
-		MigrationFS: skillvault.MigrationFiles,
+		MigrationFS: skilld.MigrationFiles,
 	})
 	if err != nil {
 		b.Fatal(err)

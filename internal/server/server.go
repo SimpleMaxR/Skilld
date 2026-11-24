@@ -15,11 +15,11 @@ import (
 	"strings"
 	"time"
 
-	"skillvault/internal/asyncwrite"
-	"skillvault/internal/db"
-	"skillvault/internal/hotstate"
-	"skillvault/internal/skill"
-	"skillvault/internal/store"
+	"skilld/internal/asyncwrite"
+	"skilld/internal/db"
+	"skilld/internal/hotstate"
+	"skilld/internal/skill"
+	"skilld/internal/store"
 )
 
 const (
@@ -28,7 +28,7 @@ const (
 	maxBodyBytes      = 16 * 1024 * 1024
 )
 
-// Options wires together all core subsystems of the SkillVault server.
+// Options wires together all core subsystems of the Skilld server.
 type Options struct {
 	SplitDB     *db.SplitDB
 	Store       *store.Store
@@ -1867,7 +1867,7 @@ func (s *Server) handleCreateAccount(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "CRYPTO_ERROR", err.Error())
 		return
 	}
-	plainToken := "svk_" + hex.EncodeToString(randBytes[:])
+	plainToken := "sdk_" + hex.EncodeToString(randBytes[:])
 	sum := sha256.Sum256([]byte(plainToken))
 
 	rec, err := s.store.CreateAccount(r.Context(), hotstate.AccountRecord{

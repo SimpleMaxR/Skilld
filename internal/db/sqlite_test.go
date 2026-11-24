@@ -9,18 +9,18 @@ import (
 	"sync"
 	"testing"
 
-	"skillvault"
-	"skillvault/internal/db"
+	"skilld"
+	"skilld/internal/db"
 )
 
 func TestSplitDBPragmasReadOnlyAndPoolConstraints(t *testing.T) {
 	ctx := context.Background()
-	dbPath := filepath.Join(t.TempDir(), "skillvault.db")
+	dbPath := filepath.Join(t.TempDir(), "skilld.db")
 
 	sdb, err := db.Open(ctx, db.Options{
 		Path:        dbPath,
 		ReadConns:   6,
-		MigrationFS: skillvault.MigrationFiles,
+		MigrationFS: skilld.MigrationFiles,
 	})
 	if err != nil {
 		t.Fatalf("db.Open failed: %v", err)
@@ -129,7 +129,7 @@ func TestSplitDBConcurrentReadsAndWritesZeroBusy(t *testing.T) {
 	sdb, err := db.Open(ctx, db.Options{
 		Path:        dbPath,
 		ReadConns:   6,
-		MigrationFS: skillvault.MigrationFiles,
+		MigrationFS: skilld.MigrationFiles,
 	})
 	if err != nil {
 		t.Fatalf("db.Open failed: %v", err)

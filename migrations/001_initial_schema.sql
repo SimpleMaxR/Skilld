@@ -1,4 +1,4 @@
--- SkillVault Core Schema (001)
+-- Skilld Core Schema (001)
 
 CREATE TABLE IF NOT EXISTS skills (
   id TEXT PRIMARY KEY,

@@ -1,4 +1,4 @@
-module skillvault
+module skilld
 
 go 1.27.4
 

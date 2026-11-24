@@ -7,11 +7,11 @@ import (
 	"path/filepath"
 	"testing"
 
-	"skillvault"
-	"skillvault/internal/db"
-	"skillvault/internal/hotstate"
-	"skillvault/internal/skill"
-	"skillvault/internal/store"
+	"skilld"
+	"skilld/internal/db"
+	"skilld/internal/hotstate"
+	"skilld/internal/skill"
+	"skilld/internal/store"
 )
 
 func TestStoreReadWriteSplitAndLifecycle(t *testing.T) {
@@ -21,7 +21,7 @@ func TestStoreReadWriteSplitAndLifecycle(t *testing.T) {
 	sdb, err := db.Open(ctx, db.Options{
 		Path:        dbPath,
 		ReadConns:   5,
-		MigrationFS: skillvault.MigrationFiles,
+		MigrationFS: skilld.MigrationFiles,
 	})
 	if err != nil {
 		t.Fatalf("db.Open failed: %v", err)
@@ -112,11 +112,11 @@ func TestStoreReadWriteSplitAndLifecycle(t *testing.T) {
 	}
 
 	// Account & SystemConfig persistence round-trip.
-	sum := sha256.Sum256([]byte("svk_store_test"))
+	sum := sha256.Sum256([]byte("sdk_store_test"))
 	rec, err := st.CreateAccount(ctx, hotstate.AccountRecord{
 		Name:           "StoreAcct",
 		TokenHashHex:   hex.EncodeToString(sum[:]),
-		TokenPrefix:    "svk_store",
+		TokenPrefix:    "sdk_store",
 		BalanceMicros:  500,
 		Enabled:        true,
 		RateLimitRPS:   100,
