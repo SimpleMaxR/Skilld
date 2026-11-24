@@ -131,7 +131,7 @@ test('GitHub import, upstream check, and upgrade work on optional Cloudflare D1 
 
     const callApi = async (pathname, body) => {
       const res = await app.fetch(
-        new Request(`http://skillvault.local${pathname}`, {
+        new Request(`http://skilld.local${pathname}`, {
           method: 'POST',
           headers: {
             'content-type': 'application/json',

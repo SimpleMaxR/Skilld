@@ -1,8 +1,8 @@
-# SkillVault
+# Skilld
 
 > **个人多设备 AI Agent Skills 云端同步与高并发单机控制中心**（原生 Go + 静态编译 SQLite 单二进制 + Mac / Linux 轻量级守护进程）
 
-SkillVault 通过统一的云端控制面 + 每台设备上的无头 Daemon，帮助你盘点并同步 **macOS** 与 **Linux 开发机**上各个 Coding CLI（**Claude Code**、**OpenAI Codex**、**CodeBuddy**、**Cursor**、**Gemini CLI**、**WorkBuddy**、**`.agents/skills`**）的 Skills，并基于 **三方内容指纹（3-Way Hash）** 安全兼容本机外部或 AI 顺手修改造成的漂移（Drift）。
+Skilld 通过统一的云端控制面 + 每台设备上的无头 Daemon，帮助你盘点并同步 **macOS** 与 **Linux 开发机**上各个 Coding CLI（**Claude Code**、**OpenAI Codex**、**CodeBuddy**、**Cursor**、**Gemini CLI**、**WorkBuddy**、**`.agents/skills`**）的 Skills，并基于 **三方内容指纹（3-Way Hash）** 安全兼容本机外部或 AI 顺手修改造成的漂移（Drift）。
 
 ---
 
@@ -34,7 +34,7 @@ SkillVault 通过统一的云端控制面 + 每台设备上的无头 Daemon，�
                                   | HTTPS + Bearer Token
                                   v
 +-------------------------------------------------------------------+
-|  skillvault-server (Single Go Binary, embed.FS + Static SQLite)   |
+|  skilld-server (Single Go Binary, embed.FS + Static SQLite)       |
 |  - Hot Path Memory: atomic ConfigSnapshot + per-account Mutex     |
 |  - Async GroupCommit: chan(8192) -> 15ms / 64 batch -> WriteDB    |
 |  - ReadDB (4..6 conns, mode=ro&_query_only=on)                    |
@@ -56,9 +56,9 @@ SkillVault 通过统一的云端控制面 + 每台设备上的无头 Daemon，�
 # 1. 编译单个自包含服务端二进制（前端与 SQL 迁移已通过 embed.FS 打包在内）
 make build
 
-# 2. 启动服务（数据持久化在 ./.data/skillvault.db；未指定 Token 时自动生成至 ./.data/token）
-export SKILLVAULT_TOKEN="sv_$(openssl rand -hex 24)"
-./bin/skillvault-server
+# 2. 启动服务（数据持久化在 ./.data/skilld.db；未指定 Token 时自动生成至 ./.data/token）
+export SKILLD_TOKEN="sd_$(openssl rand -hex 24)"
+./bin/skilld-server
 
 # 3. 浏览器打开
 open http://127.0.0.1:3737
@@ -68,19 +68,19 @@ open http://127.0.0.1:3737
 
 ```bash
 # 安装二进制与配置文件
-sudo install -m 0755 bin/skillvault-server /usr/local/bin/skillvault-server
-sudo mkdir -p /etc/skillvault /var/lib/skillvault
-sudo cp deploy/systemd/skillvault.env.example /etc/skillvault/skillvault.env
-sudo cp deploy/systemd/skillvault-server.service /etc/systemd/system/
-sudo systemctl daemon-reload && sudo systemctl enable --now skillvault-server
+sudo install -m 0755 bin/skilld-server /usr/local/bin/skilld-server
+sudo mkdir -p /etc/skilld /var/lib/skilld
+sudo cp deploy/systemd/skilld.env.example /etc/skilld/skilld.env
+sudo cp deploy/systemd/skilld-server.service /etc/systemd/system/
+sudo systemctl daemon-reload && sudo systemctl enable --now skilld-server
 
 # （可选）启用 Litestream 每 10 秒增量同步至 Cloudflare R2
-sudo cp deploy/litestream/litestream.yml /etc/skillvault/litestream.yml
+sudo cp deploy/litestream/litestream.yml /etc/skilld/litestream.yml
 sudo cp deploy/systemd/litestream.service /etc/systemd/system/
 sudo systemctl daemon-reload && sudo systemctl enable --now litestream
 
 # 一键灾备恢复（自动停服 -> 恢复校验 -> 原子替换 -> 重启）
-sudo ./deploy/litestream/restore.sh --config /etc/skillvault/litestream.yml --db-path /var/lib/skillvault/skillvault.db
+sudo ./deploy/litestream/restore.sh --config /etc/skilld/litestream.yml --db-path /var/lib/skilld/skilld.db
 ```
 
 ### 可选项：Cloudflare Workers + D1 部署
@@ -89,7 +89,7 @@ sudo ./deploy/litestream/restore.sh --config /etc/skillvault/litestream.yml --db
 
 ```bash
 npm run build:web
-cd packages/server && npx wrangler d1 execute skillvault-db --remote --file=./schema.sql && npx wrangler deploy
+cd packages/server && npx wrangler d1 execute skilld-db --remote --file=./schema.sql && npx wrangler deploy
 ```
 
 ---
@@ -98,15 +98,15 @@ cd packages/server && npx wrangler d1 execute skillvault-db --remote --file=./sc
 
 ```bash
 # 1. 注册设备并执行首次扫描上报
-node packages/agent/bin/skillvault.mjs init \
-  --server http://your-skillvault-host:3737 \
-  --token "你的-SKILLVAULT_TOKEN" \
+node packages/agent/bin/skilld.mjs init \
+  --server http://your-skilld-host:3737 \
+  --token "你的-SKILLD_TOKEN" \
   --name "macbook-pro"
 
 # 2. 前台或后台启动守护进程
-node packages/agent/bin/skillvault.mjs daemon
-node packages/agent/bin/skillvault.mjs service launchd   # macOS
-node packages/agent/bin/skillvault.mjs service systemd   # Linux
+node packages/agent/bin/skilld.mjs daemon
+node packages/agent/bin/skilld.mjs service launchd   # macOS
+node packages/agent/bin/skilld.mjs service systemd   # Linux
 ```
 
 ---

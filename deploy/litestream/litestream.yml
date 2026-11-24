@@ -1,11 +1,11 @@
-# Litestream Configuration for SkillVault (Optional Disaster Recovery)
+# Litestream Configuration for Skilld (Optional Disaster Recovery)
 #
 # Application requirement:
-#   skillvault-server explicitly sets PRAGMA wal_autocheckpoint = 0 on startup,
+#   skilld-server explicitly sets PRAGMA wal_autocheckpoint = 0 on startup,
 #   handing full WAL checkpoint ownership to Litestream so the incremental
 #   replication chain never breaks under high write concurrency.
 #
-# Required environment variables (in /etc/skillvault/litestream.env):
+# Required environment variables (in /etc/skilld/litestream.env):
 #   CF_ACCOUNT_ID=<cloudflare-account-id>
 #   LITESTREAM_R2_BUCKET=<r2-bucket-name>
 #   LITESTREAM_R2_ACCESS_KEY_ID=<r2-s3-access-key-id>
@@ -15,7 +15,7 @@
 # object store or a local/NFS `type: file` replica without changing application code.
 
 dbs:
-  - path: /var/lib/skillvault/skillvault.db
+  - path: /var/lib/skilld/skilld.db
     # Litestream owns WAL checkpoints while app sets PRAGMA wal_autocheckpoint = 0
     min-checkpoint-page-count: 1000
     max-checkpoint-page-count: 10000
@@ -24,7 +24,7 @@ dbs:
       - name: cloudflare-r2
         type: s3
         bucket: ${LITESTREAM_R2_BUCKET}
-        path: skillvault/skillvault.db
+        path: skilld/skilld.db
         endpoint: https://${CF_ACCOUNT_ID}.r2.cloudflarestorage.com
         region: auto
         force-path-style: true

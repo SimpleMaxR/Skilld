@@ -52,7 +52,7 @@ test('Optional Cloudflare Worker + D1 entrypoint serves health, auth, and embedd
   d1.exec(schemaSql);
 
   try {
-    const env = { DB: d1, SKILLVAULT_TOKEN: 'cf-optional-token' };
+    const env = { DB: d1, SKILLD_TOKEN: 'cf-optional-token' };
 
     const healthRes = await workerEntry.fetch(new Request('https://worker.local/api/health'), env);
     assert.equal(healthRes.status, 200);
@@ -72,7 +72,7 @@ test('Optional Cloudflare Worker + D1 entrypoint serves health, auth, and embedd
 
     const uiRes = await workerEntry.fetch(new Request('https://worker.local/'), env);
     assert.equal(uiRes.status, 200);
-    assert.match(await uiRes.text(), /SkillVault/);
+    assert.match(await uiRes.text(), /Skilld/);
   } finally {
     d1.close();
   }

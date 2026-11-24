@@ -1,16 +1,16 @@
 [Unit]
-Description=SkillVault Native Go + SQLite High-Concurrency Control Plane
-Documentation=https://github.com/skillvault/skillvault
+Description=Skilld Native Go + SQLite High-Concurrency Control Plane
+Documentation=https://github.com/SimpleMaxR/Skilld
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=simple
-User=skillvault
-Group=skillvault
-WorkingDirectory=/var/lib/skillvault
-EnvironmentFile=-/etc/skillvault/skillvault.env
-ExecStart=/usr/local/bin/skillvault-server
+User=skilld
+Group=skilld
+WorkingDirectory=/var/lib/skilld
+EnvironmentFile=-/etc/skilld/skilld.env
+ExecStart=/usr/local/bin/skilld-server
 KillMode=mixed
 KillSignal=SIGTERM
 TimeoutStopSec=30
@@ -23,11 +23,11 @@ NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=true
-ReadWritePaths=/var/lib/skillvault
+ReadWritePaths=/var/lib/skilld
 
 StandardOutput=journal
 StandardError=journal
-SyslogIdentifier=skillvault-server
+SyslogIdentifier=skilld-server
 
 [Install]
 WantedBy=multi-user.target

@@ -2,14 +2,14 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { computeFilesHash } from '../packages/shared/src/index.mjs';
 
-const serverUrl = (process.env.SKILLVAULT_URL || 'http://127.0.0.1:3737').replace(/\/+$/, '');
-let token = process.env.SKILLVAULT_TOKEN || '';
+const serverUrl = (process.env.SKILLD_URL || 'http://127.0.0.1:3737').replace(/\/+$/, '');
+let token = process.env.SKILLD_TOKEN || '';
 
 if (!token) {
   try {
     token = (await fs.readFile(path.resolve('.data/token'), 'utf8')).trim();
   } catch {
-    console.error('Set SKILLVAULT_TOKEN or start the local server first so .data/token exists.');
+    console.error('Set SKILLD_TOKEN or start the local server first so .data/token exists.');
     process.exit(1);
   }
 }

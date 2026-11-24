@@ -1,14 +1,14 @@
 [Unit]
-Description=Litestream SQLite Continuous WAL Replication for SkillVault (Optional DR)
-After=network-online.target skillvault-server.service
+Description=Litestream SQLite Continuous WAL Replication for Skilld (Optional DR)
+After=network-online.target skilld-server.service
 Wants=network-online.target
 
 [Service]
 Type=simple
-User=skillvault
-Group=skillvault
-EnvironmentFile=-/etc/skillvault/litestream.env
-ExecStart=/usr/local/bin/litestream replicate -config /etc/skillvault/litestream.yml
+User=skilld
+Group=skilld
+EnvironmentFile=-/etc/skilld/litestream.env
+ExecStart=/usr/local/bin/litestream replicate -config /etc/skilld/litestream.yml
 Restart=always
 RestartSec=5s
 KillSignal=SIGTERM
@@ -18,11 +18,11 @@ NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=true
-ReadWritePaths=/var/lib/skillvault
+ReadWritePaths=/var/lib/skilld
 
 StandardOutput=journal
 StandardError=journal
-SyslogIdentifier=skillvault-litestream
+SyslogIdentifier=skilld-litestream
 
 [Install]
 WantedBy=multi-user.target

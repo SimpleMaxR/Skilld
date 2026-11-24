@@ -29,7 +29,7 @@ async function startGoServer({ binPath, dataDir, token }) {
     const onData = (chunk) => {
       const text = chunk.toString('utf8');
       logs += text;
-      const m = logs.match(/SkillVault Server running on (http:\/\/[^\s]+)/);
+      const m = logs.match(/Skilld Server running on (http:\/\/[^\s]+)/);
       if (m) {
         clearTimeout(timer);
         resolve(m[1]);
@@ -57,10 +57,10 @@ async function startGoServer({ binPath, dataDir, token }) {
 }
 
 test('End-to-End Multi-Device Workflow against Native Go + Static SQLite Binary', async () => {
-  const binPath = path.resolve('bin/skillvault-server');
+  const binPath = path.resolve('bin/skilld-server');
   await fs.access(binPath);
 
-  const tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'skillvault-go-e2e-'));
+  const tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'skilld-go-e2e-'));
   const dataDir = path.join(tmpRoot, 'server-data');
   await fs.mkdir(dataDir, { recursive: true });
   const macHome = path.join(tmpRoot, 'mac-home');

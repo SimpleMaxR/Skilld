@@ -1,30 +1,30 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# One-click SQLite Disaster Recovery Script for SkillVault using Litestream (Cloudflare R2 / S3 / File)
+# One-click SQLite Disaster Recovery Script for Skilld using Litestream (Cloudflare R2 / S3 / File)
 
-CONFIG_PATH="/etc/skillvault/litestream.yml"
-DB_PATH="/var/lib/skillvault/skillvault.db"
-SERVICE_NAME="skillvault-server"
+CONFIG_PATH="/etc/skilld/litestream.yml"
+DB_PATH="/var/lib/skilld/skilld.db"
+SERVICE_NAME="skilld-server"
 LITESTREAM_SERVICE="litestream"
-ENV_FILE="/etc/skillvault/litestream.env"
+ENV_FILE="/etc/skilld/litestream.env"
 TIMESTAMP=""
 SKIP_SERVICE=0
 DRY_RUN=0
 
 usage() {
   cat <<'EOF'
-SkillVault One-Click Litestream Disaster Recovery
+Skilld One-Click Litestream Disaster Recovery
 
 Usage:
   restore.sh [options]
 
 Options:
-  --config <path>       Path to litestream.yml (default: /etc/skillvault/litestream.yml)
-  --db-path <path>      Target SQLite DB path (default: /var/lib/skillvault/skillvault.db)
-  --env-file <path>     Optional env file containing R2 credentials (default: /etc/skillvault/litestream.env)
+  --config <path>       Path to litestream.yml (default: /etc/skilld/litestream.yml)
+  --db-path <path>      Target SQLite DB path (default: /var/lib/skilld/skilld.db)
+  --env-file <path>     Optional env file containing R2 credentials (default: /etc/skilld/litestream.env)
   --timestamp <rfc3339> Optional point-in-time restore timestamp (e.g. 2026-11-24T12:00:00Z)
-  --service <name>      Systemd service name to stop/start (default: skillvault-server)
+  --service <name>      Systemd service name to stop/start (default: skilld-server)
   --skip-service        Skip stopping/starting systemd services (for standalone/non-systemd restore)
   --dry-run             Print recovery steps without modifying files or services
   -h, --help            Show this help text
@@ -165,8 +165,8 @@ if [[ "$DRY_RUN" -eq 0 ]]; then
 
   mv "$STAGING_DB" "$DB_PATH"
   chmod 0640 "$DB_PATH"
-  if id skillvault >/dev/null 2>&1; then
-    chown skillvault:skillvault "$DB_PATH" || true
+  if id skilld >/dev/null 2>&1; then
+    chown skilld:skilld "$DB_PATH" || true
   fi
   log "Restored database atomically installed at $DB_PATH"
 fi
