@@ -1,0 +1,36 @@
+# Litestream Configuration for SkillVault (Optional Disaster Recovery)
+#
+# Application requirement:
+#   skillvault-server explicitly sets PRAGMA wal_autocheckpoint = 0 on startup,
+#   handing full WAL checkpoint ownership to Litestream so the incremental
+#   replication chain never breaks under high write concurrency.
+#
+# Required environment variables (in /etc/skillvault/litestream.env):
+#   CF_ACCOUNT_ID=<cloudflare-account-id>
+#   LITESTREAM_R2_BUCKET=<r2-bucket-name>
+#   LITESTREAM_R2_ACCESS_KEY_ID=<r2-s3-access-key-id>
+#   LITESTREAM_R2_SECRET_ACCESS_KEY=<r2-s3-secret-access-key>
+#
+# Note: Cloudflare R2 is optional. You can swap the replica to any S3-compatible
+# object store or a local/NFS `type: file` replica without changing application code.
+
+dbs:
+  - path: /var/lib/skillvault/skillvault.db
+    # Litestream owns WAL checkpoints while app sets PRAGMA wal_autocheckpoint = 0
+    min-checkpoint-page-count: 1000
+    max-checkpoint-page-count: 10000
+    checkpoint-interval: 1m
+    replicas:
+      - name: cloudflare-r2
+        type: s3
+        bucket: ${LITESTREAM_R2_BUCKET}
+        path: skillvault/skillvault.db
+        endpoint: https://${CF_ACCOUNT_ID}.r2.cloudflarestorage.com
+        region: auto
+        force-path-style: true
+        access-key-id: ${LITESTREAM_R2_ACCESS_KEY_ID}
+        secret-access-key: ${LITESTREAM_R2_SECRET_ACCESS_KEY}
+        # Incremental WAL sync every 10 seconds
+        sync-interval: 10s
+        retention: 168h
+        snapshot-interval: 24h

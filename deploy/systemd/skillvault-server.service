@@ -1,0 +1,33 @@
+[Unit]
+Description=SkillVault Native Go + SQLite High-Concurrency Control Plane
+Documentation=https://github.com/skillvault/skillvault
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=skillvault
+Group=skillvault
+WorkingDirectory=/var/lib/skillvault
+EnvironmentFile=-/etc/skillvault/skillvault.env
+ExecStart=/usr/local/bin/skillvault-server
+KillMode=mixed
+KillSignal=SIGTERM
+TimeoutStopSec=30
+Restart=on-failure
+RestartSec=5s
+LimitNOFILE=65535
+
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/skillvault
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=skillvault-server
+
+[Install]
+WantedBy=multi-user.target
