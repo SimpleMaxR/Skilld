@@ -1,0 +1,13 @@
+.data/
+data/
+bin/
+*.db
+*.db-wal
+*.db-shm
+*.bak/
+.wrangler/
+.DS_Store
+node_modules/
+.env
+.env.*
+packages/server/src/web-assets.generated.mjs
