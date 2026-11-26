@@ -7,7 +7,7 @@ BINARY := bin/skilld-server
 BUILD_TAGS := sqlite_omit_load_extension
 LDFLAGS := -s -w
 
-.PHONY: build build-linux-static test test-go test-js bench run clean
+.PHONY: build build-linux-static test test-go test-js bench run clean docker-build docker-up docker-down
 
 build:
 	@mkdir -p bin
@@ -34,3 +34,12 @@ run: build
 
 clean:
 	rm -rf bin/
+
+docker-build:
+	docker build -t skilld:local .
+
+docker-up:
+	docker compose up -d --build
+
+docker-down:
+	docker compose down

@@ -1,0 +1,10 @@
+.git
+.github
+bin
+.data
+data
+node_modules
+.wrangler
+**/*.db
+**/*.db-wal
+**/*.db-shm
