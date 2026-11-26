@@ -1,0 +1,26 @@
+# Runs the same skilld-server binary as a local or systemd install.
+# Device agents stay on each Mac/Linux machine; they are not part of this container.
+
+services:
+  skilld:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: skilld:local
+    ports:
+      - "${SKILLD_PUBLISH_PORT:-3737}:3737"
+    environment:
+      HOST: 0.0.0.0
+      PORT: "3737"
+      DATA_DIR: /var/lib/skilld
+      SKILLD_TOKEN: ${SKILLD_TOKEN:-}
+      DB_READ_CONNS: ${DB_READ_CONNS:-6}
+      UPSTREAM_CHECK_INTERVAL_MIN: ${UPSTREAM_CHECK_INTERVAL_MIN:-0}
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+    volumes:
+      - skilld-data:/var/lib/skilld
+    restart: unless-stopped
+    stop_grace_period: 25s
+
+volumes:
+  skilld-data:

@@ -8,7 +8,7 @@ Skilld 通过统一的云端控制面 + 每台设备上的无头 Daemon，帮助
 
 ## 核心架构（原生 Go + 静态编译 SQLite 单机高并发骨架）
 
-- **零外部中间件 / 零 ORM / 零 Docker 依赖**：仅使用 Go 标准库 `net/http`、`database/sql` 与静态编译进单二进制的 `github.com/mattn/go-sqlite3`（不依赖 Docker、PostgreSQL、Redis）；通过根包 [`embed.go`](embed.go) 将前端静态资源（`packages/web/*`）和 SQL 迁移脚本（`migrations/*.sql`）直接打包进单个可执行文件。
+- **单二进制，无 PostgreSQL / Redis / ORM**：运行时只有这个 Go 进程和它内嵌的 SQLite，使用标准库 `net/http`、`database/sql` 与 `github.com/mattn/go-sqlite3`。根包 [`embed.go`](embed.go) 把前端（`packages/web/*`）和 SQL 迁移（`migrations/*.sql`）打进同一个可执行文件。这个二进制可以直接跑，也可以装进 [`Dockerfile`](Dockerfile) 跑；Docker 只是打包方式，不是数据库或别的中间件。
 - **显式拆分 `ReadDB` 与 `WriteDB` 连接池**：
   - 底层开启：`PRAGMA journal_mode = WAL`、`PRAGMA synchronous = NORMAL`、`PRAGMA mmap_size = 134217728`（128 MiB）、`PRAGMA cache_size = -32000`（~32 MiB）、`PRAGMA wal_autocheckpoint = 0`。
   - `ReadDB`：连接串强制附带 `mode=ro&_query_only=on`，并发读连接池限制在 `4~6` 个（默认 `6`，可通过 `DB_READ_CONNS` 调节）。
@@ -52,6 +52,10 @@ Skilld 通过统一的云端控制面 + 每台设备上的无头 Daemon，帮助
 
 ## 快速构建与启动
 
+两种部署跑的是同一个 `skilld-server`：前端和 SQL 迁移都已经嵌在二进制里。设备上的 Agent 仍然装在每台 Mac / Linux 上，不放进这个服务容器。
+
+### 二进制
+
 ```bash
 # 1. 编译单个自包含服务端二进制（前端与 SQL 迁移已通过 embed.FS 打包在内）
 make build
@@ -63,6 +67,43 @@ export SKILLD_TOKEN="sd_$(openssl rand -hex 24)"
 # 3. 浏览器打开
 open http://127.0.0.1:3737
 ```
+
+编译需要 CGO（`github.com/mattn/go-sqlite3`）。要拷到另一台 x86_64 Linux 上跑，可以用 `make build-linux-static`，构建机上需要 `x86_64-linux-musl-gcc`。
+
+### Docker Compose
+
+容器里的进程监听 `3737`，数据在命名卷 `skilld-data` 的 `/var/lib/skilld`。入口脚本先把数据目录交给用户 `skilld`（uid `3737`），再启动服务，这样卷是 root 创建的也能写。新建的数据库和 token 文件权限是 `0600`。
+
+```bash
+# 1. 准备环境变量（仓库根目录的 .env 已被 git 忽略）
+cp deploy/docker/skilld.env.example .env
+# 编辑 .env，填入 SKILLD_TOKEN；留空则首次启动自动生成
+
+# 2. 构建并后台启动（等价于 make docker-up）
+docker compose up -d --build
+
+# 3. 浏览器打开
+open http://127.0.0.1:3737
+```
+
+没有预设 token 时，到日志或数据卷里取自动生成的那一把：
+
+```bash
+docker compose logs skilld
+docker compose exec skilld cat /var/lib/skilld/token
+```
+
+`docker compose down` 会停掉容器并保留数据卷。`docker compose down -v` 会连数据卷一起删掉。只构建镜像可以用 `make docker-build` 或：
+
+```bash
+docker build -t skilld:local .
+docker run -d --name skilld -p 3737:3737 \
+  -e SKILLD_TOKEN="sd_$(openssl rand -hex 24)" \
+  -v skilld-data:/var/lib/skilld \
+  skilld:local
+```
+
+二进制和容器读同一组变量：`SKILLD_TOKEN`、`DB_READ_CONNS`、`GITHUB_TOKEN`、`UPSTREAM_CHECK_INTERVAL_MIN`。容器内的 `HOST`、`PORT`、`DATA_DIR` 由 [`docker-compose.yml`](docker-compose.yml) 固定；想换宿主机端口，改 `.env` 里的 `SKILLD_PUBLISH_PORT`。
 
 ### Linux Systemd 生产部署与 Litestream 容灾（可选 CF R2）
 
